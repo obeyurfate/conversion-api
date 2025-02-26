@@ -13,13 +13,13 @@ conversion_router = APIRouter(
 
 
 @conversion_router.post(
-    "/convert/tsv",
+    "/tsv/convert",
     status_code=status.HTTP_200_OK,
     responses={
         status.HTTP_200_OK: {
             "model": dict
         },
-        status.HTTP_400_BAD_REQUEST: {
+        status.HTTP_415_UNSUPPORTED_MEDIA_TYPE: {
             "model": schema.response.InvalidFileFormatResponse
         },
         status.HTTP_500_INTERNAL_SERVER_ERROR: {
@@ -28,7 +28,7 @@ conversion_router = APIRouter(
     },
     description="Upload a TSV file for conversion.",
 )
-async def upload_tsv_file(  # noqa: ANN201
+async def convert_tsv_file(  # noqa: ANN201
     response: Response, file: UploadFile = File(...),
 ):
     try:
@@ -40,17 +40,18 @@ async def upload_tsv_file(  # noqa: ANN201
         print(exc)
         response.status_code = schema.response.InternalUnhandledErrorResponse().error.code
         return schema.response.InternalUnhandledErrorResponse()
+    response.headers["Cache-Control"] = "no-cache, no-store"  # to make obvious that nothing is cached
     return json.loads(converted_text)
 
 
 @conversion_router.post(
-    "/convert/csv",
+    "/csv/convert",
     status_code=status.HTTP_200_OK,
     responses={
         status.HTTP_200_OK: {
             "model": dict
         },
-        status.HTTP_400_BAD_REQUEST: {
+        status.HTTP_415_UNSUPPORTED_MEDIA_TYPE: {
             "model": schema.response.InvalidFileFormatResponse
         },
         status.HTTP_500_INTERNAL_SERVER_ERROR: {
@@ -59,7 +60,7 @@ async def upload_tsv_file(  # noqa: ANN201
     },
     description="Upload a CSV file for conversion.",
 )
-async def upload_csv_file(  # noqa: ANN201
+async def convert_csv_file(  # noqa: ANN201
     response: Response, file: UploadFile = File(...),
 ):
     try:
@@ -71,4 +72,5 @@ async def upload_csv_file(  # noqa: ANN201
         print(exc)
         response.status_code = schema.response.InternalUnhandledErrorResponse().error.code
         return schema.response.InternalUnhandledErrorResponse()
+    response.headers["Cache-Control"] = "no-cache, no-store"  # to make obvious that nothing is cached
     return json.loads(converted_text)

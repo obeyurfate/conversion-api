@@ -1,5 +1,3 @@
-from typing import Literal
-
 from .base import ErrorResponse, ErrorResult
 from pydantic import StrictStr, StrictInt
 
@@ -14,7 +12,7 @@ class InternalUnhandledErrorResponse(ErrorResponse):
 
 class InvalidFileFormatResponse(ErrorResponse):
     class InvalidFileFormatError(ErrorResult):
-        code: StrictInt = 400
+        code: StrictInt = 415
         message: StrictStr = "Invalid file format."
 
     error: InvalidFileFormatError = InvalidFileFormatError()
